@@ -27,6 +27,10 @@ pyspread = "^2.3"
 pandera = "^0.20.4"
 swatch = "^0.4.0"
 kaleido = "0.2.1"
+biopython = "^1.84"
+pdf2image = "^1.17.0"
+python-pptx = "^1.0.2"
+pysam = "^0.22.1"
 
 [tool.poetry.group.dev.dependencies]
 jupyterlab = "^4.2.4"

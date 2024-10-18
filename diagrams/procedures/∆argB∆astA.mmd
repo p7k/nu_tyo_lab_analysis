@@ -1,0 +1,76 @@
+%%{
+  init: {
+    //    'theme': 'base',
+    'themeVariables': {
+      'fontFamily': 'menlo'
+    }
+  }
+}%%
+%%   Character 'flask' found at U+F0C3
+%% 󰙨  Character 'test-tube' found at U+F0668
+%% 󰊎  Character 'bowl' found at U+F028E
+%% 󰊩  Character 'bowl-outline' found at U+F02A9
+%% 󰋤  Character 'bowl-mix-outline' found at U+F02E4
+%% 󰘗  Character 'bowl-mix' found at U+F0617
+
+sequenceDiagram
+    participant bsh as BSH
+    participant incs as Incubator Still
+    participant inct as Incubator Throw
+    participant fr80 as Fridge -80C
+    participant fr20 as Fridge -20C
+    participant fr4 as Fridge 4C
+    participant bin as <<Bin>>
+
+    opt Day 1 - plate ∆cphAI ∆astA strains
+        fr80 ->> bsh: fetch: KSF107, KSF111 tubes
+        activate bsh
+        fr4 ->> bsh: fetch: empty plates (no AB)
+        bsh ->> bsh: plate
+        bsh --x fr80: return strain tubes
+        bsh --x fr4: wrap and store plates
+        bsh ->> incs: incubate overnight 30C
+        deactivate bsh
+        activate incs
+    end
+    opt Day 2 - preculture in LB
+        incs ->> bsh: plates w/colonies
+        deactivate incs
+        activate bsh
+        bsh ->> bsh: inoculate in 5mL LB (125mL flasks)
+        bsh ->> inct: incubate overnight 30C 250RPM
+        deactivate bsh
+        activate inct
+    end
+    opt Day 3 - mix in ∆argB LP (linear product)
+        inct ->> bsh: culture inoculum
+        deactivate inct
+        activate bsh
+        fr20 ->> bsh: ∆argB LP
+        loop each KSF107, KSF111
+            bsh ->> bsh: mix in culture tube :: 1mL LB + 70µL culture
+            alt exper
+                bsh ->> bsh: add 1µl ∆argB LP
+            else negative control
+                bsh --> bsh: nan
+            end
+            bsh --x bin: discard culture - bleach vat
+            bsh --x fr20: return ∆argB LP
+            bsh ->> inct: incubate mixed tubes 30C 250RPM :: 3hrs
+        end
+        deactivate bsh
+        activate inct
+        inct ->> bsh: fetch cultures
+        deactivate inct
+        activate bsh
+        fr4 ->> bsh: fetch 2 KAN plates
+        loop each KSF107, KSF111
+            loop each exper, neg.ctrl.
+                bsh ->> bsh: add 20µL culture to plate
+                bsh ->> bsh: spread with ~10 glass beads
+                bsh --x bin: discard beads - special waste bottle in BSH
+                bsh ->> inct: incubate overnight 30C over
+            end
+        end
+        deactivate bsh
+    end
