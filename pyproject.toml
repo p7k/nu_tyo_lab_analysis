@@ -31,6 +31,7 @@ biopython = "^1.84"
 pdf2image = "^1.17.0"
 python-pptx = "^1.0.2"
 pysam = "^0.22.1"
+uncertainties = "^3.2.2"
 
 [tool.poetry.group.dev.dependencies]
 jupyterlab = "^4.2.4"
