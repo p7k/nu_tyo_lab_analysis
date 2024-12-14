@@ -1,0 +1,35 @@
+%%{
+  init: {
+    'theme': 'default'
+  }
+}%%
+
+block-beta
+    columns 4
+    usr["User Layer"]:4
+
+    block: runtime:4
+        rct["Runtime"]
+        block equil:2
+%%        columns 5
+%%        api:2
+        end
+    end
+
+%%    block: containers:4
+%%        mct["Containers<br/>(hardware<br/>abstraction)"]
+%%        Docker:2
+%%        Singularity
+%%    end
+
+%%    block: hardware:4
+%%        hwt["Hardware"]
+%%        local
+%%        kube["kubernetes-like<br/>(Railway)"]
+%%        HPC["Quest HPC"]
+%%    end
+%%
+%%    class rct BT
+%%    class mct BT
+%%    class hwt BT
+%%    classDef BT stroke: transparent, fill: transparent

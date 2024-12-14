@@ -1,0 +1,35 @@
+flowchart TB
+    subgraph d_plate[Day 1: Plate Strains]
+        controls
+        experimentals
+    end
+
+    subgraph d_precult[Day 2: Pre-culture]
+        controls -- incubate --> precult[Inoculate<br/>in LB]
+        experimentals -- incubate --> precult
+        prep_p1[Prep Phase I Media<br/>phosphate-deplete]
+        prep_p2[Prep Phase II Media<br/>arginine-deplete]
+    end
+
+    subgraph d_phase1["Day 3: Phase I -- CGP Accumulation"]
+        precult -- incubate --> phase1[Inoculate<br/>in Phase I media]
+    end
+
+    subgraph d_phase2["Day 4: Phase II -- Selective Pressure"]
+        phase1 -- incubate --> sds{Visualize CGP<br/>SDS-PAGE}
+        sds -- no CGP --x term([Abort])
+        sds -- yes CGP --> wash["Wash"]
+        wash -- spin / resuspend --> phase2[Inoculate<br/>in Phase II media]
+        sds -- yes CGP --> cgp_quant["CGP quantification<br/>via Cell Dry Weight<br/>(optional)"]
+    end
+
+    subgraph d_phase2_track[Day 5: Phase II -- Track Growth]
+        phase2 -- incubate --> od[OD600 every 6-12 hours<br/>for 40-60 hours<br/>]
+    end
+
+    subgraph d_phase2_recycle["Day 6: Recycle Winners (optional)"]
+        od -- incubate --> analyze[Analyze OD data]
+        analyze --> select[Select<br/>fittest samples]
+        select --x sequence["DNA Sequencing Prep<br/>(optional)"]
+        select --o recycle["Recycle to Phase I<br/>(optional)"]
+    end

@@ -1,0 +1,53 @@
+flowchart TB
+    subgraph d_plate[Day 1: Plate Strains]
+        KSF001[KSF001<br/>wildtype <br/>positive control : Phase I/II] --> no_ab_plates[Plates w/o Antibiotics]
+        KSF087["KSF087<br/>∆cphAI <br/>negative control : Phase I"] --> no_ab_plates
+        KSF284["KSF284<br/>∆astBR∆astAC∆cphAIΩKan<br/>negative control : Phase II"] --> kan_plates[Plates w/ Kanamycin]
+        KSF285["KSF285<br/>∆argBR∆astACΩKan <br/>experimental"] --> kan_plates
+        no_ab_plates --> incubate["Incubate<br/>30°C"]
+        kan_plates --> incubate
+    end
+
+    subgraph d_precult[Day 2: Pre-culture]
+        incubate --> precult[Inoculate<br/>Media: 10mL LB</br>Flask: 125mL non-baffled<br/><ul>Replicates:<li>KSF284,KSF285: 3</li><li>KSF001,KSF087: 1</li><li>total: 8 flasks</li></ul>]
+        precult --> shake30["Incubate<br/>30°C, 250rpm, 5cm throw"]
+        subgraph Prepare PO4-deplete Media for Day 3
+            direction TB
+            mix_0Pi[Mix 500mL] --> filter_0Pi[Filter Sterilize]
+        end
+        subgraph Prepare Arg-deplete Media for Day 4
+            direction TB
+            mix_0Arg[Mix 500mL] --> filter_0Arg[Filter Sterilize]
+        end
+    end
+
+    subgraph d_phase1[Day 3: Accumulate CGP - Phase I]
+        shake30 -- take OD600 --> no_phosphate["Inoculate<br/>Media: 50mL 0•PO4 MSM<br/>Flask: 250mL Baffled<br/>OD_init: 0.10"]
+        no_phosphate --> shake30slow["Incubate<br/>30°C, 130rpm, 5cm throw"]
+    end
+
+    subgraph d_phase2[Day 4: Selective Pressure - Phase II]
+        shake30slow -- " 1.5mL samples " --> prot_viz{CGP visualization<br/>protein SDS-PAGE}
+        prot_viz -- no CGP --> term([Abort])
+        subgraph WashResus[Wash & Resuspend]
+            shake30slow -- sans KSF087 --> spin_floor["Centrifuge<br/>50mL falcon tubes<br/>5.3 rotor, 4°C, 5000rpm, 15min"]
+            spin_floor -- once --> wash["Wash<br/>in 35mL 0•Arg MSM<br/>50mL falcon tubes<br/>using 50mL serological pipettes"]
+            wash --> spin_floor
+            spin_floor --> resus["Resuspend<br/>in 10mL 0•Arg MSM<br/>50mL falcon tubes<br/>using 25mL serological pipettes"]
+        end
+        shake30slow -- take 10mL samples --> cgp_quant["CGP quantification<br/>via Cell Dry Weight<br/>(optional)"]
+        prot_viz -- yes CGP --> WashResus
+        prot_viz -- yes CGP --> cgp_quant
+        resus -- take OD600 --> no_arg["Inoculate<br/>Media: 25mL 0•Arg MSM<br/>Flask: 125mL non-baffled</br>OD_init: 0.10"]
+    end
+
+    subgraph d_phase2_track[Day 5: Track Growth]
+        no_arg --> od[OD600 every 6-12 hours<br/>for 40-60 hours<br/>or until fold difference between<br/>KSF285 and KSF284 is >2]
+    end
+
+    subgraph d_phase2_recycle["Day 6: Recycle Winners"]
+        od --> analyze[analyze OD data]
+        analyze --> select[Select<br/>fittest samples]
+        select --x sequence["DNA Sequencing Prep<br/>(optional)"]
+        select --o recycle["Recycle to Phase I<br/>(optional)"]
+    end
